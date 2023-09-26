@@ -124,7 +124,7 @@ export default function SellingPrice() {
                 <h4 className="text-color text-lg">
                   <span>
                     {" "}
-                    {selected?.symbol} {(amount * 0.95).toFixed(2)}
+                    {selected?.symbol} {((amount * detailsTransaction?.seller.value)/100).toFixed(2)}
                   </span>
                   <span className="text-color">/ ticket</span>
                 </h4>
@@ -141,7 +141,7 @@ export default function SellingPrice() {
                 <h4 className="text-color text-lg">
                   <span className="text-color">
                     {" "}
-                    {selected?.symbol} {(amount * 1.08).toFixed(2)}
+                    {selected?.symbol} {((amount * detailsTransaction?.buyer.value)/100).toFixed(2)}
                   </span>
                   <span className="text-color">/ ticket</span>
                 </h4>
