@@ -38,7 +38,7 @@ type currencyOptions = {
 }
 export default function OriginalPrice() {
   const [mainCurrency, setMainCurrency] = useState<currencyOptions[]>([]);
-  const [selected, setSelected] = useState<currencyOptions>();
+  const [selected, setSelected] = useState<currencyOptions | undefined>(mainCurrency?.[0]);
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
 
@@ -51,7 +51,8 @@ export default function OriginalPrice() {
     getPrice();
   }, []);
   useEffect(() => {
-    setSelected(mainCurrency?.[0])
+    if (mainCurrency?.length) setSelected(mainCurrency?.[0])
+
   }, [mainCurrency]);
 
 
@@ -71,7 +72,7 @@ export default function OriginalPrice() {
               <ArrowDownIcon width={24} height={24} fill="currentColor" />
             </Listbox.Button>
             <Listbox.Options className="text-color absolute top-14 h-48 w-max  space-y-4 overflow-y-auto bg-white  px-4 py-2 shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a]">
-              {mainCurrency.map((option) => (
+              {mainCurrency?.length && mainCurrency.map((option) => (
                 <Listbox.Option key={option.code} value={option}>
                   {({ selected }) => (
                     <span
