@@ -8,12 +8,11 @@ import {
 } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
-import { classNames } from "@/utils";
+import { classNames, getCurrency } from "@/utils";
 import { axiosInstance } from "@/lib/axios/axiosInstance";
 
 export async function action({ params: _, request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  console.log("req : ", request.json());
 
   const { ticket_seller_id, ticket_id, event_id } = JSON.parse(
     localStorage.getItem("data") ?? "",
@@ -37,21 +36,17 @@ type currencyOptions = {
   symbol: string
 }
 export default function OriginalPrice() {
-  const [mainCurrency, setMainCurrency] = useState<currencyOptions[]>([]);
+  const [mainCurrency, setMainCurrency] = useState<currencyOptions[] | null>();
   const [selected, setSelected] = useState<currencyOptions | undefined>(mainCurrency?.[0]);
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
 
-  const getPrice = async (): Promise<void> => {
-    const response = await axiosInstance.get("currencies");
-    setMainCurrency(response?.data?.resp?.data);
-  };
-
   useEffect(() => {
-    getPrice();
+
+    getCurrency(setMainCurrency);
   }, []);
   useEffect(() => {
-    if (mainCurrency?.length) setSelected(mainCurrency?.[0])
+    if (mainCurrency?.length) setSelected(mainCurrency[0])
 
   }, [mainCurrency]);
 

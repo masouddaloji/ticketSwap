@@ -6,31 +6,10 @@ import {
   redirect,
   useNavigation,
 } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
-import { classNames } from "@/utils";
+import { classNames, getCurrency } from "@/utils";
 import { axiosInstance } from "@/lib/axios/axiosInstance";
-
-const CURRENCY_OPTIONS = [
-  { title: "Euro", id: "€" },
-  { title: "Danish Krone", id: "DKK" },
-  { title: "British Pound", id: "£" },
-  { title: "Hungarian Forint", id: "HUF" },
-  { title: "Polish Zloty", id: "PLN" },
-  { title: "Swedish Krona", id: "SEK" },
-  { title: "US Dollar", id: "$" },
-  { title: "Canadian Dollar", id: "CA$" },
-  { title: "Australian Dollar", id: "A$" },
-  { title: "New Zealand Dollar", id: "NZ$" },
-  { title: "Swiss Franc", id: "CHF" },
-  { title: "Norwegian Krone", id: "NOk" },
-  { title: "Brazilian Real", id: "R$" },
-  { title: "Singapore Dollar", id: "SGD" },
-  { title: "Czech Koruna", id: "CZK" },
-  { title: "Romanian Leu", id: "RON" },
-  { title: "Bulgarian Lev", id: "BGN" },
-  { title: "Mexican Peso", id: "MX$" },
-];
 
 export async function action({ params: _, request }: ActionFunctionArgs) {
   const formData = await request.formData();
@@ -46,15 +25,46 @@ export async function action({ params: _, request }: ActionFunctionArgs) {
     ticket_price: formData.get("price"),
     ticket_currency: formData.get("currency[id]"),
   });
-  console.log(res.data);
+  console.log("res.data : ", res.data);
 
   return redirect("/phone-details");
 }
-
+type currencyOptions = {
+  name: string
+  code: string
+  symbol: string
+}
+type details={
+  "buyer":{
+    value:string,
+    percent:string
+  },
+  "seller":{
+    value:string,
+    percent:string
+  },
+}
 export default function SellingPrice() {
-  const [selected, setSelected] = useState(CURRENCY_OPTIONS[0]);
+  const [detailsTransaction, setDetailsTransaction] = useState<details>()
+  const [mainCurrency, setMainCurrency] = useState<currencyOptions[] | null>();
+  const [selected, setSelected] = useState<currencyOptions | undefined>(mainCurrency?.[0]);
   const [amount, setAmount] = useState(0);
   const navigation = useNavigation();
+
+  const getDetails = async (): Promise<void> => {
+    const response = await axiosInstance.get("commission");
+    setDetailsTransaction(response?.data?.resp?.data);
+  };
+
+  useEffect(() => {
+    getCurrency(setMainCurrency);
+    getDetails();
+  }, []);
+
+  useEffect(() => {
+    if (mainCurrency?.length) setSelected(mainCurrency[0])
+
+  }, [mainCurrency]);
 
   return (
     <>
@@ -68,19 +78,19 @@ export default function SellingPrice() {
         <div className="relative mb-6 flex justify-between gap-4">
           <Listbox value={selected} onChange={setSelected} name="currency">
             <Listbox.Button className="text-color flex  h-14 items-center gap-4 rounded-lg bg-elevatedBackground px-4 text-lg focus-within:bg-white focus-within:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none">
-              {selected.id}
+              {selected?.symbol}
               <ArrowDownIcon width={24} height={24} fill="currentColor" />
             </Listbox.Button>
             <Listbox.Options className="absolute top-14 h-48 w-max space-y-4  overflow-y-auto bg-white px-4  py-2 shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a]">
-              {CURRENCY_OPTIONS.map((option) => (
-                <Listbox.Option key={option.id} value={option}>
+              {mainCurrency?.length && mainCurrency.map((option) => (
+                <Listbox.Option key={option.code} value={option}>
                   {({ selected }) => (
                     <span
                       className={
                         selected ? "text-color font-bold" : "text-color"
                       }
                     >
-                      {option.title}
+                      {option.name}
                     </span>
                   )}
                 </Listbox.Option>
@@ -108,13 +118,13 @@ export default function SellingPrice() {
                 <div>
                   <p className="text-lg !text-foreground">You'll receive</p>
                   <p className=" !text-foregroundMuted ">
-                    Your price minus 5% service fee
+                    Your price minus {detailsTransaction?.seller.value}% service fee
                   </p>
                 </div>
                 <h4 className="text-color text-lg">
                   <span>
                     {" "}
-                    {selected.id} {(amount * 0.95).toFixed(2)}
+                    {selected?.symbol} {(amount * 0.95).toFixed(2)}
                   </span>
                   <span className="text-color">/ ticket</span>
                 </h4>
@@ -131,13 +141,13 @@ export default function SellingPrice() {
                 <h4 className="text-color text-lg">
                   <span className="text-color">
                     {" "}
-                    {selected.id} {(amount * 1.08).toFixed(2)}
+                    {selected?.symbol} {(amount * 1.08).toFixed(2)}
                   </span>
                   <span className="text-color">/ ticket</span>
                 </h4>
               </div>
               <p className=" !text-foregroundMuted ">
-                Your price plus 5% service fee and 3% transaction fee
+                Your price plus {detailsTransaction?.buyer.value}% service fee and 3% transaction fee
               </p>
             </div>
           </div>
