@@ -29,26 +29,28 @@ export async function action({ params: _, request }: ActionFunctionArgs) {
 
   return redirect("/phone-details");
 }
+
 type currencyOptions = {
-  name: string
-  code: string
-  symbol: string
-}
-type details={
-  "buyer":{
-    value:string,
-    percent:string
-  },
-  "seller":{
-    value:string,
-    percent:string
-  },
-}
+  name: string;
+  code: string;
+  symbol: string;
+};
+
+type details = {
+  buyer: {
+    value: number;
+    type: string;
+  };
+  seller: {
+    value: number;
+    type: string;
+  };
+};
 export default function SellingPrice() {
   const [detailsTransaction, setDetailsTransaction] = useState<details>()
   const [mainCurrency, setMainCurrency] = useState<currencyOptions[] | null>();
   const [selected, setSelected] = useState<currencyOptions | undefined>(mainCurrency?.[0]);
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState<number>(0);
   const navigation = useNavigation();
 
   const getDetails = async (): Promise<void> => {
@@ -56,6 +58,45 @@ export default function SellingPrice() {
     setDetailsTransaction(response?.data?.resp?.data);
   };
 
+  const calculateSellPrice = (): number => {
+    if (Number.isNaN(amount)) {
+      return 0;
+    }
+    if (!detailsTransaction) {
+      return 0;
+    }
+    if (detailsTransaction?.seller?.type === "percent") {
+      const price =
+        amount - ((amount * detailsTransaction?.seller.value) / 100);
+      return price;
+    } else {
+      const price = (amount - detailsTransaction?.seller.value);
+      return price;
+    }
+  };
+
+  const calculateBuyPrice = (): number => {
+    if (Number.isNaN(amount)) {
+      return 0;
+    }
+    if (!detailsTransaction) {
+      return 0;
+    }
+
+    if (detailsTransaction?.buyer?.type === "percent") {
+      const price =
+        amount +
+        ((amount * detailsTransaction?.buyer.value) / 100) +
+        ((amount * detailsTransaction?.seller.value) / 100);
+      return price;
+    } else {
+      const price =
+        amount +
+        detailsTransaction?.buyer.value +
+        detailsTransaction?.seller.value;
+      return price;
+    }
+  };
   useEffect(() => {
     getCurrency(setMainCurrency);
     getDetails();
@@ -118,13 +159,13 @@ export default function SellingPrice() {
                 <div>
                   <p className="text-lg !text-foreground">You'll receive</p>
                   <p className=" !text-foregroundMuted ">
-                    Your price minus {detailsTransaction?.seller.value}% service fee
+                    Your price minus {detailsTransaction?.seller?.type === "percent" ? `${detailsTransaction?.seller.value}% ` : `${detailsTransaction?.seller.value}`}  service fee
                   </p>
                 </div>
                 <h4 className="text-color text-lg">
                   <span>
                     {" "}
-                    {selected?.symbol} {((amount * detailsTransaction?.seller.value)/100).toFixed(2)}
+                    {selected?.symbol} {calculateSellPrice()?.toFixed(2)}
                   </span>
                   <span className="text-color">/ ticket</span>
                 </h4>
@@ -141,13 +182,13 @@ export default function SellingPrice() {
                 <h4 className="text-color text-lg">
                   <span className="text-color">
                     {" "}
-                    {selected?.symbol} {((amount * detailsTransaction?.buyer.value)/100).toFixed(2)}
+                    {selected?.symbol} {calculateBuyPrice()?.toFixed(2)}
                   </span>
                   <span className="text-color">/ ticket</span>
                 </h4>
               </div>
               <p className=" !text-foregroundMuted ">
-                Your price plus {detailsTransaction?.buyer.value}% service fee and 3% transaction fee
+                Your price plus {detailsTransaction?.buyer?.type === "percent" ? `${detailsTransaction?.buyer.value}%` : `${detailsTransaction?.buyer.value}`} service fee and 3% transaction fee
               </p>
             </div>
           </div>
