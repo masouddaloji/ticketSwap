@@ -56,6 +56,8 @@ export default function SellingPrice() {
   const getDetails = async (): Promise<void> => {
     const response = await axiosInstance.get("commission");
     setDetailsTransaction(response?.data?.resp?.data);
+    console.log("response",response?.data);
+    
   };
 
   const calculateSellPrice = (): number => {
@@ -188,7 +190,7 @@ export default function SellingPrice() {
                 </h4>
               </div>
               <p className=" !text-foregroundMuted ">
-                Your price plus {detailsTransaction?.buyer?.type === "percent" ? `${detailsTransaction?.buyer.value}%` : `${detailsTransaction?.buyer.value}`} service fee and 3% transaction fee
+                Your price plus {detailsTransaction?.buyer?.type === "percent" ? `${detailsTransaction?.buyer.value}%` : `${detailsTransaction?.buyer.value}`} service fee and {detailsTransaction?.buyer?.type === "percent" ? `${detailsTransaction?.seller.value}%` : `${detailsTransaction?.seller.value}`} transaction fee
               </p>
             </div>
           </div>
