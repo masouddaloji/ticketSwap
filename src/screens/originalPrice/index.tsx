@@ -53,14 +53,14 @@ export default function OriginalPrice() {
 
   return (
     <>
-      <h1 className="text-color  mb-4 text-[2rem] font-bold md:text-[3.5rem]">
+      <h1 className="text-color  mb-4 text-[2rem] font-bold md:text-[3.5rem] sell-ticket-step3-title">
         Add the original price per ticket
       </h1>
-      <h3 className="mb-6 text-xl !text-foregroundMuted  md:text-2xl">
+      <h3 className="mb-6 text-xl !text-foregroundMuted  md:text-2xl sell-ticket-step3-subtitle">
         Make sure to include the service fees.
       </h3>
-      <Form method="post">
-        <div className="relative mb-6 flex justify-between gap-4">
+      <Form method="post" className="sell-ticket-step3-form">
+        <div className="relative flex justify-between gap-4 mb-6 sell-ticket-currencies">
           <Listbox value={selected} onChange={setSelected} name="currency">
             <Listbox.Button className="text-color flex h-14 items-center gap-4 rounded-lg bg-elevatedBackground px-4 text-lg focus-within:bg-white focus-within:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none">
               {selected?.symbol}
@@ -86,7 +86,7 @@ export default function OriginalPrice() {
             id="number"
             aria-label="number"
             type="number"
-            className="text-color h-14 w-full rounded-lg bg-elevatedBackground px-2 text-lg focus:bg-white   focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none "
+            className="text-color h-14 w-full rounded-lg bg-elevatedBackground px-2 text-lg focus:bg-white   focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none sell-ticket-input"
             onChange={(e) => setAmount(e.target.valueAsNumber)}
             name="price"
           />
@@ -94,7 +94,7 @@ export default function OriginalPrice() {
         <div>
           <div
             className={classNames(
-              "mb-8 flex justify-between",
+              "mb-8 flex justify-between sell-ticket-total-amount",
               amount ? "!text-foreground" : "!text-foregroundSubtle",
             )}
           >
@@ -107,19 +107,19 @@ export default function OriginalPrice() {
             </h4>
           </div>
         </div>
-        <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
+        <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-between sell-ticket-return-to-step-2">
           <Link
             to="/ticket-info"
             className=" flex items-center justify-center gap-2 rounded-lg  bg-[#00b6f01f] bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold !text-action  md:w-max "
           >
-            <span className="h-6 w-6">
+            <span className="w-6 h-6">
               <ArrowLeftIcon fill="currentColor" />
             </span>
             <span>Previous</span>
           </Link>
           <button
             className={classNames(
-              "ml-auto  flex items-center justify-center rounded-lg  bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white  md:w-max",
+              "ml-auto  flex items-center justify-center rounded-lg  bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white  md:w-max sell-ticket-goto-step4",
               amount
                 ? "opacity-100"
                 : "pointer-events-none cursor-default opacity-50",
@@ -132,7 +132,7 @@ export default function OriginalPrice() {
               hidden={navigation.state !== "submitting"}
             >
               <Spinner
-                className="animate-spin"
+                className="animate-spin sell-ticket-spinner"
                 fill="currentColor"
                 aria-hidden="true"
               />

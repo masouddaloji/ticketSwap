@@ -25,6 +25,7 @@ export async function action({ params: _, request }: ActionFunctionArgs) {
     ticket_price: formData.get("price"),
     ticket_currency: formData.get("currency[id]"),
   });
+  console.log("res.data : ", res.data);
 
   return redirect("/phone-details");
 }
@@ -56,7 +57,7 @@ export default function SellingPrice() {
     const response = await axiosInstance.get("commission");
     setDetailsTransaction(response?.data?.resp?.data);
     console.log("response",response?.data);
-    
+
   };
 
   const calculateSellPrice = (): number => {
@@ -110,14 +111,14 @@ export default function SellingPrice() {
 
   return (
     <>
-      <h1 className="text-color mb-4 text-[2rem] font-bold md:text-[3.5rem]">
+      <h1 className="text-color mb-4 text-[2rem] font-bold md:text-[3.5rem] sell-ticket-step4-title">
         Set your ticket price
       </h1>
-      <h3 className="mb-6 text-xl !text-foregroundMuted  md:text-2xl">
+      <h3 className="mb-6 text-xl !text-foregroundMuted  md:text-2xl sell-ticket-step4-subtitle">
         Enter your price manually or use the price suggestions!
       </h3>
-      <Form method="post">
-        <div className="relative mb-6 flex justify-between gap-4">
+      <Form method="post" className="sell-ticket-step4-form">
+        <div className="relative flex justify-between gap-4 mb-6 sell-ticket-currencies">
           <Listbox value={selected} onChange={setSelected} name="currency">
             <Listbox.Button className="text-color flex  h-14 items-center gap-4 rounded-lg bg-elevatedBackground px-4 text-lg focus-within:bg-white focus-within:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none">
               {selected?.symbol}
@@ -144,7 +145,7 @@ export default function SellingPrice() {
             aria-label="number"
             type="number"
             name="price"
-            className="text-color h-14 w-full rounded-lg bg-elevatedBackground px-2 text-lg focus:bg-white   focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none "
+            className="text-color h-14 w-full rounded-lg bg-elevatedBackground px-2 text-lg focus:bg-white   focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none sell-ticket-input"
             onChange={(e) => setAmount(e.target.valueAsNumber)}
           />
         </div>
@@ -153,60 +154,60 @@ export default function SellingPrice() {
             <div className="mb-6">
               <div
                 className={classNames(
-                  "mb-6 flex justify-between border-b pb-6",
+                  "mb-6 flex justify-between border-b pb-6 sell-ticket-total-amount",
                   amount ? "!text-foreground" : "!text-foregroundSubtle",
                 )}
               >
-                <div>
+                <div className="sell-ticket-step4-amount-text">
                   <p className="text-lg !text-foreground">You'll receive</p>
                   <p className=" !text-foregroundMuted ">
                     Your price minus {detailsTransaction?.seller?.type === "percent" ? `${detailsTransaction?.seller.value}% ` : `${detailsTransaction?.seller.value}`}  service fee
                   </p>
                 </div>
-                <h4 className="text-color text-lg">
+                <h4 className="text-lg text-color sell-ticket-step4-total">
                   <span>
                     {" "}
                     {selected?.symbol} {calculateSellPrice()?.toFixed(2)}
                   </span>
-                  <span className="text-color">/ ticket</span>
+                  <span className="text-color sell-ticket-step4-total-text">/ ticket</span>
                 </h4>
               </div>
             </div>
             <div className="mb-6">
               <div
                 className={classNames(
-                  " flex justify-between ",
+                  " flex justify-between sell-ticket-subtotal-amount",
                   amount ? "!text-foreground" : "!text-foregroundSubtle",
                 )}
               >
-                <p className="text-lg !text-foreground">Buyers will pay</p>
-                <h4 className="text-color text-lg">
+                <p className="text-lg !text-foreground sell-ticket-step4-subtotal-amount-text">Buyers will pay</p>
+                <h4 className="text-lg text-color sell-ticket-step4-subtotal">
                   <span className="text-color">
                     {" "}
                     {selected?.symbol} {calculateBuyPrice()?.toFixed(2)}
                   </span>
-                  <span className="text-color">/ ticket</span>
+                  <span className="text-color sell-ticket-step4-subtotal-text">/ ticket</span>
                 </h4>
               </div>
-              <p className=" !text-foregroundMuted ">
+              <p className=" !text-foregroundMuted sell-ticket-step4-footer-text">
                 Your price plus {detailsTransaction?.buyer?.type === "percent" ? `${detailsTransaction?.buyer.value}%` : `${detailsTransaction?.buyer.value}`} service fee and {detailsTransaction?.buyer?.type === "percent" ? `${detailsTransaction?.seller.value}%` : `${detailsTransaction?.seller.value}`} transaction fee
               </p>
             </div>
           </div>
         </div>
-        <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
+        <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-between sell-ticket-return-to-step-3">
           <Link
             to="/original-price"
             className=" flex items-center justify-center gap-2 rounded-lg  bg-[#00b6f01f] bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold !text-action  md:w-max "
           >
-            <span className="h-6 w-6">
+            <span className="w-6 h-6">
               <ArrowLeftIcon fill="currentColor" />
             </span>
             <span>Previous</span>
           </Link>
           <button
             className={classNames(
-              "ml-auto  flex items-center justify-center rounded-lg  bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white  md:w-max",
+              "ml-auto  flex items-center justify-center rounded-lg  bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white  md:w-max sell-ticket-goto-step5",
               amount
                 ? "opacity-100"
                 : "pointer-events-none cursor-default opacity-50",

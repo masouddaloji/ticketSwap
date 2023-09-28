@@ -54,25 +54,25 @@ export default function File() {
   });
   return (
     <>
-      <h1 className="text-color mb-4 text-[2rem] font-bold md:text-[3.5rem]">
+      <h1 className="text-color mb-4 text-[2rem] font-bold md:text-[3.5rem] sell-ticket-step2-title">
         Add your tickets
       </h1>
-      <h3 className="mb-6 text-xl !text-foregroundMuted  md:text-2xl">
+      <h3 className="mb-6 text-xl !text-foregroundMuted  md:text-2xl sell-ticket-step2-subtitle">
         Fans will only be able to see your tickets once they’ve bought them.
       </h3>
       <div>
         {file ? (
-          <div className="bg-white">
-            <h4 className="flex items-center justify-between text-lg uppercase !text-foreground md:text-xl">
+          <div className="bg-white sell-ticket-step2-file">
+            <h4 className="flex items-center justify-between text-lg uppercase !text-foreground md:text-xl sell-ticket-step3-file-name">
               {file.name}
               <button
-                className=" !text-[#fe4a49]"
+                className=" !text-[#fe4a49] sell-ticket-step2-remove-file"
                 onClick={() => setFile(null)}
               >
                 Remove file
               </button>
             </h4>
-            <div className="my-6 flex  items-center  gap-14 rounded-xl px-12 py-6 shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] ">
+            <div className="my-6 flex  items-center  gap-14 rounded-xl px-12 py-6 shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] sell-ticket-step2-screenshot">
               <div className="before:content-[' '] relative w-20 before:absolute before:-right-7 before:-top-4 before:-z-10 before:block before:h-[126%] before:w-[174%] before:rounded-full before:bg-[#f0fbfe]">
                 <img
                   src={file.src}
@@ -93,11 +93,11 @@ export default function File() {
         ) : null}
         {uploadProgress ? (
           <div>
-            <div className="my-6 flex  items-center  gap-14 rounded-xl px-12 py-6 shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] ">
+            <div className="my-6 flex  items-center  gap-14 rounded-xl px-12 py-6 shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] sell-ticket-step2-select-file">
               <div className="before:content-[' '] relative flex h-32 w-24 items-center justify-center before:absolute before:-z-10 before:block before:h-[110%] before:w-[180%] before:rounded-full before:bg-[#50a7bf] ">
-                <Spinner className="w-8 animate-spin  " />
+                <Spinner className="w-8 animate-spin sell-ticket-spinner" />
               </div>
-              <div className="flex w-full flex-col gap-2 pt-1">
+              <div className="flex flex-col w-full gap-2 pt-1 sell-ticket-step2-progress">
                 <progress
                   value={uploadProgress}
                   max={100}
@@ -351,29 +351,29 @@ export default function File() {
               </g>
             </g>
           </svg>
-          <h3 className="text-lg font-semibold !text-foreground">
+          <h3 className="text-lg font-semibold !text-foreground sell-ticket-step2-upload-title">
             Upload PDF or Apple Wallet tickets
           </h3>
-          <p className="text-sm !text-foreground">
+          <p className="text-sm !text-foreground sell-ticket-step2-upload-text">
             If your original file contains multiple tickets make sure to upload
             all of them, and we will let you select the ones you want to sell.
           </p>
           <input {...getInputProps()} accept="" />
           {isDragActive ? (
-            <p className="!text-action">Drop the files here ...</p>
+            <p className="!text-action sell-ticket-step2-dropbox-text">Drop the files here ...</p>
           ) : (
-            <p className="w-full rounded-lg bg-action  py-3 text-center text-lg font-semibold !text-white md:bg-transparent md:!text-action">
+            <p className="w-full rounded-lg bg-action  py-3 text-center text-lg font-semibold !text-white md:bg-transparent md:!text-action sell-ticket-step2-dropbox-button">
               Select a file
             </p>
           )}
         </div>
       </div>
-      <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
+      <div className="flex flex-col-reverse gap-2 md:flex-row md:justify-between sell-ticket-return-to-step1">
         <Link
           to="/"
           className=" flex items-center justify-center gap-2 rounded-lg  bg-[#00b6f01f] bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold !text-action  md:w-max "
         >
-          <span className="h-6 w-6">
+          <span className="w-6 h-6">
             <ArrowLeftIcon fill="currentColor" />
           </span>
           <span>Previous</span>
@@ -381,7 +381,7 @@ export default function File() {
         <Link
           to={"/" + routes.MAIN.ticketInfo}
           className={classNames(
-            "ml-auto block rounded-lg  bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white  md:w-max",
+            "ml-auto block rounded-lg  bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white  md:w-max sell-ticket-goto-step3",
             file
               ? "!opacity-100"
               : "pointer-events-none cursor-default opacity-50",
@@ -408,8 +408,8 @@ export default function File() {
             <div className="fixed inset-0 !bg-black !bg-opacity-25" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center  text-center">
+          <div className="fixed inset-0 overflow-y-auto sell-ticket-step2-modal">
+            <div className="flex items-center justify-center min-h-full text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -419,14 +419,14 @@ export default function File() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white  p-8 align-middle shadow-xl transition-all">
+                <Dialog.Panel className="w-full max-w-md p-8 overflow-hidden align-middle transition-all transform bg-white shadow-xl rounded-xl">
                   <Dialog.Title
                     as="h2"
-                    className="text-left text-2xl font-bold !text-foreground md:text-[2rem]"
+                    className="text-left text-2xl font-bold !text-foreground md:text-[2rem] sell-ticket-step2-modal-title"
                   >
                     Add your tickets
                   </Dialog.Title>
-                  <p className=" text-color  my-4 text-left md:mt-4 md:text-xl">
+                  <p className="my-4 text-left text-color md:mt-4 md:text-xl sell-ticket-step2-modal-text">
                     Your tickets will remain private. Once sold, we'll transfer
                     them to the buyer and we will send the money to your bank. A
                     smooth, safe and zero-hassle experience for everyone
@@ -434,7 +434,7 @@ export default function File() {
                   </p>
                   <button
                     className={classNames(
-                      "block   rounded-lg bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white",
+                      "block   rounded-lg bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white sell-ticket-step2-modal-button",
                     )}
                     onClick={() => setIsOpen(false)}
                   >
