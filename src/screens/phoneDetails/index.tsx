@@ -1,17 +1,25 @@
 import { ArrowLeftIcon } from "@/components/icons";
-import { Link } from "react-router-dom";
+import { Link, redirect } from "react-router-dom";
 
 import { useState, lazy, Fragment } from "react";
 import { classNames } from "@/utils";
 import { Dialog, Transition } from "@headlessui/react";
 import OtpInput from "react-otp-input";
+import { signInWithPhoneNumber, RecaptchaVerifier } from 'firebase/auth'
+import { auth } from "./../../firebase";
+
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
 const ReactFlagsSelect = lazy(() => import("react-flags-select"));
 
-export default function PhoneDetails() {
+export default function kPhoneDetails() {
   let [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [user, setUser] = useState(null)
+
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (!e.target.value) return;
     const phoneNumberRegex =
@@ -27,6 +35,31 @@ export default function PhoneDetails() {
   function openModal() {
     setIsOpen(true);
   }
+
+  const sendNumber = async () => {
+    const recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {});
+
+    try {
+      const confirmation = await signInWithPhoneNumber(auth, `+${phone}`, recaptcha);
+      console.log("confirmation ", confirmation);
+      setUser(confirmation);
+      openModal();
+      window.location.href = "/summary";
+
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+  const verifyCode = async () => {
+    try {
+      const data = await user?.confirm(otp);
+      closeModal()
+
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   return (
     <>
       <h1 className="text-color mb-4  text-[2rem] font-bold md:text-[3.5rem]">
@@ -37,9 +70,16 @@ export default function PhoneDetails() {
         will remain private 🔒.
       </h3>
       <div className="mb-6 flex justify-between gap-4">
-        <ReactFlagsSelect
+        <PhoneInput
+          inputClass="!text-color !focus:bg-white !pl-14 !h-14 !w-1/2 !rounded-lg !bg-elevatedBackground px-2 !text-lg !focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] !focus:outline-none md:!w-full"
+          country={'us'}
+          value={phone}
+          onChange={(phone) => setPhone(phone)}
+        />
+
+        {/* <ReactFlagsSelect
           selected={selected}
-          onSelect={(code) => setSelected(code)}
+          onSelect={(code,number) => setSelected(code)}
           searchable
           className="text-color rounded-lg bg-elevatedBackground !pb-0 focus-within:bg-white focus-within:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none [&_button]:h-full   [&_button]:border-none "
         />
@@ -49,8 +89,9 @@ export default function PhoneDetails() {
           className="text-color  !focus:bg-white h-14 w-1/2 rounded-lg !bg-elevatedBackground px-2    text-lg focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none md:w-full"
           type="tel"
           onChange={handleChange}
-        />
+        /> */}
       </div>
+      <div id="recaptcha-container mb-5"></div>
       <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
         <Link
           to="/selling-price"
@@ -68,7 +109,7 @@ export default function PhoneDetails() {
               ? "opacity-100"
               : "pointer-events-none cursor-default opacity-50",
           )}
-          onClick={openModal}
+          onClick={sendNumber}
         >
           Continue
         </button>
@@ -131,6 +172,7 @@ export default function PhoneDetails() {
                       className={classNames(
                         "mb-4 ml-auto block  w-full rounded-lg bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white",
                       )}
+                      onClick={verifyCode}
                     >
                       Submit
                     </button>

@@ -25,7 +25,6 @@ export async function action({ params: _, request }: ActionFunctionArgs) {
     ticket_price: formData.get("price"),
     ticket_currency: formData.get("currency[id]"),
   });
-  console.log("res.data : ", res.data);
 
   return redirect("/phone-details");
 }
