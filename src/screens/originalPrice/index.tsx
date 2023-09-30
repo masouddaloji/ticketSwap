@@ -26,8 +26,6 @@ export async function action({ params: _, request }: ActionFunctionArgs) {
     orginal_price: formData.get("price"),
     orginal_currency: formData.get("currency[code]"),
   });
-  console.log(res.data);
-
   return redirect("/selling-price");
 }
 type currencyOptions = {
