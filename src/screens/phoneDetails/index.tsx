@@ -1,7 +1,6 @@
+import { useState, Fragment } from "react";
 import { ArrowLeftIcon } from "@/components/icons";
-import { Link, redirect } from "react-router-dom";
-
-import { useState, lazy, Fragment } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { classNames } from "@/utils";
 import { Dialog, Transition } from "@headlessui/react";
 import OtpInput from "react-otp-input";
@@ -11,23 +10,14 @@ import { auth } from "./../../firebase";
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 
-const ReactFlagsSelect = lazy(() => import("react-flags-select"));
 
 export default function kPhoneDetails() {
+  const navigate = useNavigate();
   let [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState<any>(null)
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!e.target.value) return;
-    const phoneNumberRegex =
-      /^\+?(\d{1,4})?[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,9}[-.\s]?\d{1,9}[-.\s]?\d{1,9}$/;
-    if (!phoneNumberRegex.test(e.target.value)) return;
-
-    setPhone(e.target.value);
-  }
   function closeModal() {
     setIsOpen(false);
   }
@@ -35,16 +25,17 @@ export default function kPhoneDetails() {
   function openModal() {
     setIsOpen(true);
   }
-
+  function navigated() {
+    navigate("/summary");
+  }
   const sendNumber = async () => {
-    const recaptcha = new RecaptchaVerifier(auth, 'recaptcha-container', {});
+    const recaptcha = new RecaptchaVerifier(auth, "recaptcha-container", {});
 
     try {
       const confirmation = await signInWithPhoneNumber(auth, `+${phone}`, recaptcha);
       console.log("confirmation ", confirmation);
       setUser(confirmation);
       openModal();
-      window.location.href = "/summary";
 
     } catch (error) {
       console.log("error", error);
@@ -53,8 +44,9 @@ export default function kPhoneDetails() {
   const verifyCode = async () => {
     try {
       const data = await user?.confirm(otp);
+      console.log("data", data);
       closeModal()
-
+      navigated()
     } catch (error) {
       console.log("error", error);
     }
@@ -83,15 +75,9 @@ export default function kPhoneDetails() {
           searchable
           className="text-color rounded-lg bg-elevatedBackground !pb-0 focus-within:bg-white focus-within:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none [&_button]:h-full   [&_button]:border-none "
         />
-        <input
-          id="phone"
-          aria-label="Phone-number"
-          className="text-color  !focus:bg-white h-14 w-1/2 rounded-lg !bg-elevatedBackground px-2    text-lg focus:shadow-[0_1px_2px_#1a21291a,0_4px_12px_#1a21291a] focus:outline-none md:w-full"
-          type="tel"
-          onChange={handleChange}
-        /> */}
+ */}
       </div>
-      <div id="recaptcha-container mb-5"></div>
+      <div id="recaptcha-container" className="mb-4"></div>
       <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
         <Link
           to="/selling-price"
