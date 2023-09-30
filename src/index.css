@@ -53,3 +53,62 @@ progress[value]::-webkit-progress-value {
 .text-color {
   color: #1a2129 !important;
 }
+.css-1rnpnzp {
+  background-color: #3e282e;
+  border-radius: 0.5rem;
+  min-block-size: 2.75rem;
+  align-items: flex-start;
+  margin-block-start: 0.5rem;
+  display: flex;
+}
+.css-153je4p {
+  color: #fe4a49;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.css-mdolut {
+  display: inline-grid;
+  place-items: center;
+  vertical-align: middle;
+  inline-size: 24px;
+  block-size: 24px;
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  color: inherit;
+}
+.css-1nanc4n {
+  color: #fff;
+  fill: currentColor;
+}
+.css-153je4p svg {
+  color: #fe4a49 !important;
+}
+.css-laisax {
+  flex-basis: 100%;
+  padding-block: 0.6875rem 0.625rem;
+  padding-inline: 0px 0.625rem;
+}
+@media (min-width: 48em) {
+  .css-1rnpnzp {
+      min-block-size: 3.5rem;
+  }
+  .css-153je4p {
+      inline-size: 3.5rem;
+      block-size: 3.5rem;
+  }
+  .css-laisax {
+      padding-block: 0.9375rem 0.875rem;
+      padding-inline: 0px 0.875rem;
+  }
+  .css-pupf2x {
+      color: #ffffff;
+      margin-block: 0px;
+      margin-inline: 0px;
+  }
+}

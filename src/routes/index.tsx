@@ -13,7 +13,7 @@ import TicketInfo, { action as tInfoAction } from "@/screens/ticketInfo";
 import { createBrowserRouter } from "react-router-dom";
 import File from "@/screens/files";
 import PhoneDetails from "@/screens/phoneDetails";
-import Summary from "@/screens/summary";
+import Summary,{action as SummaryAction} from "@/screens/summary";
 
 export const routes = {
   MAIN: {
@@ -66,6 +66,7 @@ export const router = createBrowserRouter(
         {
           path: routes.MAIN.summary,
           element: <Summary />,
+          action: SummaryAction,
         },
       ],
     },

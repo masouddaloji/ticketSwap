@@ -1,6 +1,63 @@
-import { Link } from "react-router-dom";
+import {useState,useEffect} from 'react'
+import { axiosInstance } from "@/lib/axios/axiosInstance";
+import {
+  ActionFunctionArgs,
+  Form,
+  Link,
+  redirect,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
+
+export async function action({ params: _, request }: ActionFunctionArgs) {
+  const formData = await request.formData();
+
+  const { ticket_seller_id, ticket_id, event_id } = JSON.parse(
+    localStorage.getItem("data") ?? "",
+  );
+  console.log("ticket_id",ticket_id);
+  
+  const res = await axiosInstance.post("ticket", {
+    uid: 1,
+    step: "6",
+    event_id,
+    ticket_id,
+    ticket_seller_id,
+    orginal_price: formData.get("price"),
+    orginal_currency: formData.get("currency[code]"),
+  });
+  console.log(res);
+
+  // return redirect("/selling-price");
+}
+
 
 export default function Summary() {
+  const navigate = useNavigate();
+  const [dataPage,setDataPage]=useState<any>()
+  function navigated() {
+    navigate("/sell-ticket");
+  }
+  const getData=async()=>{
+    const res = await axiosInstance.get("ticket?uid=1")
+    console.log(res);
+    setDataPage(res?.data?.resp?.data)
+    
+  }
+  useEffect(() => {
+    getData()
+  }, [])
+
+  const resetHandler=async()=>{
+    if(dataPage?.ticket_id){
+      const res = await axiosInstance.delete(`ticket?ticket_id=${dataPage.ticket_id}`)
+      if(res?.status===200){
+        navigated()
+      }
+      console.log("res reset handler",res);
+      
+    }
+  }
   return (
     <>
       <h1 className="mb-4  text-[2rem] font-bold md:text-[3.5rem]">
@@ -16,13 +73,12 @@ export default function Summary() {
             <h4 className="text-lg text-foreground">Event</h4>
             <p className="mb-2 mt-2 text-foregroundMuted">
               <span className="block">
-                Levitate London- Konstantin Sibold - Cristoph - Stimming - Toto
-                Chiavetta
+                {dataPage?.event?.name}
               </span>
               <span className="block">Regular</span>
-              <span className="block">Sat, Sep 9 • E1, GB</span>
+              <span className="block">{dataPage?.event?.date} • {dataPage?.event?.venue}, {dataPage?.event?.country}</span>
             </p>
-            <Link to="/event" className="font-semibold text-action">
+            <Link to="sell-ticket" className="font-semibold text-action">
               Edit
             </Link>
           </div>
@@ -52,12 +108,19 @@ export default function Summary() {
           <div className="">
             <h4 className="text-lg">Upload your tickets</h4>
             <p className="my-4 text-foregroundMuted">0 tickets for sale</p>
-            <Link
+            {/* <Link
               to="/files"
               className=" block rounded-lg bg-action px-6  py-3 font-semibold text-white"
             >
               Complete this step
-            </Link>
+            </Link> */}
+            <div className="before:content-[' '] relative w-20 before:absolute before:-right-7 before:-top-4 before:-z-10 before:block before:h-[126%] before:w-[174%] before:rounded-full before:bg-[#f0fbfe]">
+                <img
+                  src={dataPage?.ticket_screenshot?.url}
+                  alt="ticket screen shot"
+                  className="w-full rounded-md"
+                />
+              </div>
           </div>
         </div>
         <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
@@ -140,17 +203,21 @@ export default function Summary() {
           </div>
         </div>
       </div>
-      <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
-        <Link
-          to=".."
-          className=" flex items-center justify-center gap-2 rounded-lg  bg-[#00b6f01f] bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-action  md:w-max "
-        >
-          Reset and start over
-        </Link>
-        <button className="w-full rounded-lg bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white opacity-50 md:w-max ">
-          Create listing
-        </button>
-      </div>
+      <Form method="post">
+
+        <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
+          <button
+            onClick={resetHandler}
+            className=" flex items-center justify-center gap-2 rounded-lg  bg-[#00b6f01f] bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-action  md:w-max "
+          >
+            Reset and start over
+          </button>
+          <button className="w-full rounded-lg bg-action bg-gradient-to-b from-[rgba(255,255,255,0.24)] to-transparent px-8 py-4 text-center text-lg font-semibold text-white opacity-50 md:w-max " type='submit'>
+            Create listing
+          </button>
+        </div>
+      </Form>
+
     </>
   );
 }

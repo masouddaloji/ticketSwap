@@ -24,7 +24,7 @@ export async function action({ params: _, request }: ActionFunctionArgs) {
     ticket_id,
     ticket_seller_id,
     orginal_price: formData.get("price"),
-    orginal_currency: formData.get("currency[id]"),
+    orginal_currency: formData.get("currency[code]"),
   });
   console.log(res.data);
 
