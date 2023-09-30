@@ -33,10 +33,11 @@ export default function kPhoneDetails() {
   }
   const sendNumber = async () => {
     const recaptcha = new RecaptchaVerifier(auth, "recaptcha-container", {});
-
+    setIsShowLoading(true)
     try {
       const confirmation = await signInWithPhoneNumber(auth, `+${phone}`, recaptcha);
       setUser(confirmation);
+      setIsShowLoading(false)
       openModal();
 
     } catch (error) {

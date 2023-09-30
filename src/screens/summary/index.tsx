@@ -122,7 +122,7 @@ export default function Summary() {
         </div>
         <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
           <div>
-            <h4 className="text-lg">Add original ticket price</h4>
+            <h4 className="text-lg">{dataPage?.original_price} {dataPage?.original_currency}</h4>
             <p className="my-4 text-foregroundMuted">
               The amount you paid when you originally bought your ticket.
             </p>
@@ -130,13 +130,13 @@ export default function Summary() {
         </div>
         <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
           <div>
-            <h4 className="text-lg">Set your selling price</h4>
+            <h4 className="text-lg">{dataPage?.seller_price} {dataPage?.seller_currency}</h4>
             <p className="my-4 text-foregroundMuted">
               The price you want to sell each ticket for.
             </p>
           </div>
         </div>
-        <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
+        {/* <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
           <div>
             <h4 className="text-lg">Verify your phone number</h4>
             <p className="my-4 text-foregroundMuted">
@@ -145,10 +145,15 @@ export default function Summary() {
               seller.
             </p>
           </div>
-        </div>
+        </div> */}
         <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
           <div>
-            <h4 className="text-lg">Identity verification</h4>
+            <h4 className="text-lg"> 
+            <Link to={dataPage?.identity_verification?.url} >
+            {dataPage?.identity_verification?.filled?"show":"Add" }
+            </Link>
+            
+            </h4>
             <p className="my-4 text-foregroundMuted">
               Our payment provider needs some additional info before they can
               pay you out.
@@ -157,14 +162,19 @@ export default function Summary() {
         </div>
         <div className="flex justify-between p-4 [border-block-start:1px_solid_#e5e7e8]">
           <div>
-            <h4 className="text-lg">Add your bank details</h4>
+            <h4 className="text-lg">
+            <Link to={dataPage?.bank_details?.url} >
+            {dataPage?.bank_details?.filled?"show":"Add" }
+            </Link>
+            </h4>
             <p className="my-4 text-foregroundMuted">
               We will transfer your money as soon as your tickets are sold.
             </p>
           </div>
         </div>
       </div>
-      <div className="mb-6 flex justify-between rounded-lg p-4 [border:1px_solid_#e5e7e8]">
+
+      {/* <div className="mb-6 flex justify-between rounded-lg p-4 [border:1px_solid_#e5e7e8]">
         <div>
           <h4 className="text-lg">Visibility</h4>
           <p className="my-4 text-foregroundMuted">Public on TicketSwap</p>
@@ -199,7 +209,7 @@ export default function Summary() {
             </span>
           </div>
         </div>
-      </div>
+      </div> */}
 
 
       <div className="flex  flex-col-reverse gap-2 md:flex-row  md:justify-between">
