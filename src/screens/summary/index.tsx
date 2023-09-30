@@ -33,7 +33,7 @@ export default function Summary() {
   const navigate = useNavigate();
   const [dataPage, setDataPage] = useState<any>()
   function navigated() {
-    navigate("/sell-ticket");
+    navigate("/");
   }
   const getData = async () => {
     const res = await axiosInstance.get("ticket?uid=1")
